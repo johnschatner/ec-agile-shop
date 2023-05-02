@@ -1,0 +1,27 @@
+.submenu {
+  display: flex;
+  justify-content: center;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 300px;
+
+  color: white;
+  background-color: #0000008d;
+
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  pointer-events: none;
+}
+
+.submenu.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.submenu-nav {
+  display: flex;
+  flex-direction: column;
+}

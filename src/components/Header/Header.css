@@ -1,3 +1,8 @@
+header {
+  background-color: rgb(228, 185, 185);
+  padding: 1rem;
+}
+
 /* Dropdown Button */
 .dropbtn {
   background-color: #04aa6d;

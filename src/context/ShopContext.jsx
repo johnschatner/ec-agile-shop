@@ -10,6 +10,11 @@ export const ShopContextProvider = (props) => {
 
   console.log(PRODUCTS);
 
+  const getProduct = (id) => {
+    const product = PRODUCTS.find((product) => product.id === id);
+    return product;
+  };
+
   const getProductsInCategory = (category) => {
     const productsInCategory = PRODUCTS.filter(
       (product) => product.category === category
@@ -21,6 +26,7 @@ export const ShopContextProvider = (props) => {
   const contextValue = {
     PRODUCTS,
     setPRODUCTS,
+    getProduct,
     getProductsInCategory,
   };
 

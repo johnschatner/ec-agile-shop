@@ -1,5 +1,5 @@
 import "./Header.css";
-
+import { Link } from "react-router-dom";
 import Menu from "../Menu/Menu.jsx";
 
 export default function Header() {
@@ -8,9 +8,9 @@ export default function Header() {
       <div className="header-container">
         <div className="header-left">
           <div className="header-logo">
-            <a href="/">
+            <Link to="/">
               <img src="" alt="LOGO" />
-            </a>
+            </Link>
           </div>
         </div>
         <div className="header-right">

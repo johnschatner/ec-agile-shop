@@ -8,7 +8,7 @@ export default function PageRoutes() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
-      <Route path="/category" element={<CategoryPage />} />
+      <Route path="/category/:category" element={<CategoryPage />} />
     </Routes>
   );
 }

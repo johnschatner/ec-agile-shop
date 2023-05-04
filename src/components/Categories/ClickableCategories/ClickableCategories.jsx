@@ -8,9 +8,9 @@ export default function ClickableCategories() {
 
   return (
     <section className="clickable-categories">
-      <Link to="/category">Kategori</Link>
-      <Link to="/category">Kategori</Link>
-      <Link to="/category">Kategori</Link>
+      <Link to="/category/shirts">Shirts</Link>
+      <Link to="/category/pants">Pants</Link>
+      <Link to="/category/shoes">Shoes</Link>
     </section>
   );
 }

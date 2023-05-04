@@ -1,12 +1,21 @@
 export const PRODUCTS = [
   {
-    id: 1,
+    id: 0,
     name: "Basic T-Shirt",
     price: 20,
     description: "A simple, comfortable t-shirt made from 100% cotton.",
     image: "https://i.imgur.com/NmOgKzf.jpg",
     category: "T-Shirts",
     stock: 50,
+  },
+  {
+    id: 1,
+    name: "Pleated Skirt",
+    price: 50,
+    description: "A stylish pleated skirt that's perfect for a night out.",
+    image: "https://i.imgur.com/yVStsNt.jpg",
+    category: "Skirts",
+    stock: 20,
   },
   {
     id: 2,
@@ -174,14 +183,5 @@ export const PRODUCTS = [
     image: "https://i.imgur.com/0gVJv8t.jpg",
     category: "Jackets",
     stock: 15,
-  },
-  {
-    id: 20,
-    name: "Pleated Skirt",
-    price: 50,
-    description: "A stylish pleated skirt that's perfect for a night out.",
-    image: "https://i.imgur.com/yVStsNt.jpg",
-    category: "Skirts",
-    stock: 20,
   },
 ];

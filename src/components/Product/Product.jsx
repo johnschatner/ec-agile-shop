@@ -10,10 +10,12 @@ export default function Product(props) {
 
   return (
     <div className="product-card">
+      <div className="product-img">
+        <img src={image} alt="" />
+      </div>
       <div>{name}</div>
       <div>{price}</div>
       <div>{description}</div>
-      <img src={image} alt="" />
     </div>
   );
 }

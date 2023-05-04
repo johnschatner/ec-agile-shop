@@ -1,0 +1,11 @@
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  padding: 1rem;
+  gap: 0.5rem;
+}

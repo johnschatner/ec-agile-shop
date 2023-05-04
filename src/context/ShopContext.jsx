@@ -1,15 +1,18 @@
 import { createContext, useState } from "react";
 // Products
-import { PRODUCTS } from "../assets/products/products";
+import { products } from "../assets/products/products";
 
 export const ShopContext = createContext(null);
 
 export const ShopContextProvider = (props) => {
   // Stuff
-  console.log(PRODUCTS);
+  const [PRODUCTS, setPRODUCTS] = useState(products);
 
   // Export
-  const contextValue = {};
+  const contextValue = {
+    PRODUCTS,
+    setPRODUCTS,
+  };
 
   return (
     <ShopContext.Provider value={contextValue}>

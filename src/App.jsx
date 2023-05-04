@@ -1,20 +1,20 @@
-import { useState } from "react";
 import "./App.css";
+import { BrowserRouter } from "react-router-dom";
 
 // Context
 import { ShopContextProvider } from "./context/ShopContext";
 
 // Components
+import PageRoutes from "./pages/PageRoutes";
 import Header from "./components/Header/Header";
-import HeroBanner from "./components/HeroBanner/HeroBanner";
-import ClickableCategories from "./components/Categories/ClickableCategories/ClickableCategories";
 
 function App() {
   return (
     <ShopContextProvider>
       <Header></Header>
-      <HeroBanner></HeroBanner>
-      <ClickableCategories></ClickableCategories>
+      <BrowserRouter>
+        <PageRoutes />
+      </BrowserRouter>
     </ShopContextProvider>
   );
 }

@@ -3,12 +3,9 @@ import { ShopContext } from "../../../context/ShopContext";
 import { useContext, useEffect } from "react";
 
 export default function ClickableCategories() {
-  //   const { clock, setClock } = useContext(ShopContext);
+  const { getProductsInCategory } = useContext(ShopContext);
 
-  //   useEffect(() => {
-  //     console.log(clock);
-  //     setClock("14:00");
-  //   }, [clock]);
+  console.log(getProductsInCategory("Shirts"));
 
   return (
     <section className="clickable-categories">

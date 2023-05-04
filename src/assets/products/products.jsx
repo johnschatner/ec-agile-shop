@@ -7,6 +7,7 @@ export const products = [
     image: "https://i.imgur.com/NmOgKzf.jpg",
     category: "Shirts",
     stock: 50,
+    dateAdded: "2023-05-01",
   },
   {
     id: 2,
@@ -17,6 +18,7 @@ export const products = [
     image: "https://i.imgur.com/vVewjUh.jpg",
     category: "Shirts",
     stock: 40,
+    dateAdded: "2023-05-02",
   },
   {
     id: 3,
@@ -26,6 +28,7 @@ export const products = [
     image: "https://i.imgur.com/hB0XWYD.jpg",
     category: "Shirts",
     stock: 35,
+    dateAdded: "2023-05-03",
   },
   {
     id: 4,
@@ -35,6 +38,7 @@ export const products = [
     image: "https://i.imgur.com/yvNPAx7.jpg",
     category: "Shoes",
     stock: 20,
+    dateAdded: "2023-05-02",
   },
   {
     id: 5,
@@ -45,6 +49,7 @@ export const products = [
     image: "https://i.imgur.com/79J9XGv.jpg",
     category: "Shoes",
     stock: 15,
+    dateAdded: "2023-05-03",
   },
   {
     id: 6,
@@ -55,6 +60,7 @@ export const products = [
     image: "https://i.imgur.com/m7AGmyJ.jpg",
     category: "Shoes",
     stock: 10,
+    dateAdded: "2023-05-01",
   },
   {
     id: 7,
@@ -64,6 +70,7 @@ export const products = [
     image: "https://i.imgur.com/gmY6VPO.jpg",
     category: "Pants",
     stock: 25,
+    dateAdded: "2023-05-04",
   },
   {
     id: 8,
@@ -73,6 +80,7 @@ export const products = [
     image: "https://i.imgur.com/g7cPCNe.jpg",
     category: "Pants",
     stock: 20,
+    dateAdded: "2023-05-03",
   },
   {
     id: 9,
@@ -83,6 +91,7 @@ export const products = [
     image: "https://i.imgur.com/v1tqMCI.jpg",
     category: "Pants",
     stock: 15,
+    dateAdded: "2023-05-01",
   },
   {
     id: 10,
@@ -92,6 +101,7 @@ export const products = [
     image: "https://i.imgur.com/l1lNWQI.jpg",
     category: "Shirts",
     stock: 10,
+    dateAdded: "2023-05-01",
   },
   {
     id: 11,
@@ -101,6 +111,7 @@ export const products = [
     image: "https://i.imgur.com/N2LLdNl.jpg",
     category: "Shoes",
     stock: 10,
+    dateAdded: "2023-05-04",
   },
   {
     id: 12,
@@ -111,6 +122,7 @@ export const products = [
     image: "https://i.imgur.com/kmcmnlQ.jpg",
     category: "Pants",
     stock: 30,
+    dateAdded: "2023-05-04",
   },
   {
     id: 13,
@@ -120,6 +132,7 @@ export const products = [
     image: "https://i.imgur.com/fp9Z3q3.jpg",
     category: "Shirts",
     stock: 20,
+    dateAdded: "2023-05-04",
   },
   {
     id: 14,
@@ -129,6 +142,7 @@ export const products = [
     image: "https://i.imgur.com/8omd1WF.jpg",
     category: "Shirts",
     stock: 25,
+    dateAdded: "2023-05-04",
   },
   {
     id: 15,
@@ -138,6 +152,7 @@ export const products = [
     image: "https://i.imgur.com/Ftq3rFp.jpg",
     category: "Shirts",
     stock: 20,
+    dateAdded: "2023-05-04",
   },
   {
     id: 16,
@@ -148,6 +163,7 @@ export const products = [
     image: "https://i.imgur.com/t2aO8Nv.jpg",
     category: "Shoes",
     stock: 15,
+    dateAdded: "2023-05-04",
   },
   {
     id: 17,
@@ -157,6 +173,7 @@ export const products = [
     image: "https://i.imgur.com/ygjQoJi.jpg",
     category: "Shoes",
     stock: 20,
+    dateAdded: "2023-05-04",
   },
   {
     id: 18,
@@ -167,6 +184,7 @@ export const products = [
     image: "https://i.imgur.com/nU6YhK6.jpg",
     category: "Pants",
     stock: 15,
+    dateAdded: "2023-05-04",
   },
   {
     id: 19,
@@ -177,6 +195,7 @@ export const products = [
     image: "https://i.imgur.com/1k0lLcB.jpg",
     category: "Shorts",
     stock: 25,
+    dateAdded: "2023-05-04",
   },
   {
     id: 20,
@@ -187,5 +206,6 @@ export const products = [
     image: "https://i.imgur.com/9bySvJL.jpg",
     category: "Shoes",
     stock: 10,
+    dateAdded: "2023-05-04",
   },
 ];

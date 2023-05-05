@@ -34,6 +34,7 @@ export const ShopContext = createContext(null);
 export const ShopContextProvider = (props) => {
   // Stuff
   const [PRODUCTS, setPRODUCTS] = useState([]);
+  const [CATEGORIES, setCATEGORIES] = useState([]);
 
   function getCachedProducts() {
     const cachedData = localStorage.getItem("products");
@@ -62,6 +63,49 @@ export const ShopContextProvider = (props) => {
       unsubscribe();
     };
   }, []);
+
+  async function addCategoryToFireStore(categoryName) {
+    console.log("added to firestore:", categoryName);
+    const categoryCollection = collection(db, "categories");
+    const category = {
+      category: categoryName,
+    };
+    try {
+      const docRef = await addDoc(categoryCollection, category);
+      console.log(`Document written with ID: ${docRef.id}`);
+    } catch (e) {
+      console.error(`Error adding document: ${e}`);
+    }
+  }
+
+  const setCachedCategories = (categories) => {
+    localStorage.setItem("categories", JSON.stringify(categories));
+  };
+
+  function fetchCategories() {
+    const categoriesCollection = collection(db, "categories");
+    const q = query(categoriesCollection, orderBy("id"));
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const categoriesSet = new Set(); // Use a Set to store unique categories
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        const category = data.name;
+        categoriesSet.add(category); // Add the category to the Set
+      });
+
+      const categoriesList = Array.from(categoriesSet); // Convert the Set back to an array
+      console.log("Fetching categories from Firestore", categoriesList);
+      setCATEGORIES(categoriesList);
+      setCachedCategories(categoriesList); // Update the cached data in local storage
+    });
+
+    return unsubscribe;
+  }
+
+  async function addProductToFirestore(obj) {
+    console.log("added to firestore");
+  }
 
   async function addProductsToFirestore() {
     const productsCollection = collection(db, "products");
@@ -112,6 +156,9 @@ export const ShopContextProvider = (props) => {
     setPRODUCTS,
     getProduct,
     getProductsInCategory,
+    addProductToFirestore,
+    fetchCategories,
+    addCategoryToFireStore,
   };
 
   return (

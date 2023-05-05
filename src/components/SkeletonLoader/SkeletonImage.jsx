@@ -11,9 +11,13 @@ const SkeletonImage = ({ children, delay = 0 }) => {
     const img = new Image();
     img.onload = () => {
       setDimensions({ width: img.width, height: img.height });
-      setTimeout(() => {
+      if (delay > 0) {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, delay);
+      } else {
         setIsLoading(false);
-      }, delay);
+      }
     };
     img.src = imgElement.props.src;
   }, [children, delay]);

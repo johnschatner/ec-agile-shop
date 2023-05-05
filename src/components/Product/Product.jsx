@@ -13,7 +13,7 @@ export default function Product(props) {
   return (
     <div className="product-card">
       <div className="product-img">
-        <SkeletonImage delay={400}>
+        <SkeletonImage delay={200}>
           <img src={image} alt="" />
         </SkeletonImage>
       </div>

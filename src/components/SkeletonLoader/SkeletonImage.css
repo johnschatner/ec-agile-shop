@@ -1,6 +1,12 @@
 .skeleton-image-wrapper {
   position: relative;
   display: inline-block;
+  max-width: 100%;
+}
+
+.skeleton-image-wrapper.rendered {
+  max-width: 100%;
+  height: 100% !important;
 }
 
 .skeleton-image {

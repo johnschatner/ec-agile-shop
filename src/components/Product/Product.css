@@ -30,3 +30,6 @@
   scale: 1.1 1.17;
   opacity: 1;
 }
+.product-img img {
+  max-width: 100%;
+}

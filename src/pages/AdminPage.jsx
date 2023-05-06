@@ -3,13 +3,29 @@ import { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 
 export default function AdminPage() {
-  const { addProductToFirestore, addCategoryToFireStore, fetchCategories } =
-    useContext(ShopContext);
+  const {
+    PRODUCTS,
+    CATEGORIES,
+    addProductToFirestore,
+    addCategoryToFireStore,
+  } = useContext(ShopContext);
 
   const [addingProduct, setAddingProduct] = useState(false);
   const [addingCategory, setAddingCategory] = useState(false);
+  const [productTitleError, setProductTitleError] = useState({
+    error: false,
+    helperText: "",
+  });
+  const [categoryError, setCategoryError] = useState({
+    error: false,
+    helperText: "",
+  });
 
-  console.log(fetchCategories());
+  const isProductTitleUnique = (name) => {
+    return !PRODUCTS.some(
+      (product) => product.name.toLowerCase() === name.toLowerCase()
+    );
+  };
 
   const addDataHandler = (type) => {
     if (type === "product") {
@@ -23,26 +39,72 @@ export default function AdminPage() {
       setAddingProduct(false); // Hide adding product form
       if (addingCategory) {
         setAddingCategory(false);
+        setCategoryError({ error: false, helperText: "" });
       } else {
         setAddingCategory(true); // Display adding category form
       }
     }
   };
 
-  const addProductHandler = (e) => {
-    e.preventDefault();
-    console.log(e);
-
-    setAddingProduct(false); // Hide adding product form
-    addProductToFirestore({}); // Add product to firestore
+  const onProductTitleInputChange = () => {
+    if (productTitleError.error) {
+      setProductTitleError({ error: false, helperText: "" });
+    }
   };
 
-  const addCategoryHandler = (e) => {
+  const addProductHandler = async (e) => {
+    e.preventDefault();
+    const title = e.target.name.value;
+
+    if (!isProductTitleUnique(title)) {
+      setProductTitleError({
+        error: true,
+        helperText: "Product title already exists. Please use a unique title.",
+      });
+      return;
+    }
+
+    const productName = e.target.name.value;
+    const productPrice = parseFloat(e.target.price.value);
+    const productCategory = e.target.category.value;
+    const productDescription = e.target.description.value;
+    const productImage = e.target.imageUpload.files[0];
+
+    // Create the product data object
+    const newProduct = {
+      name: productName,
+      price: productPrice,
+      category: productCategory,
+      description: productDescription,
+      productImage,
+    };
+
+    setAddingProduct(false); // Hide adding product form
+    addProductToFirestore(newProduct); // Add product to firestore
+  };
+
+  const addCategoryHandler = async (e) => {
     e.preventDefault();
     const categoryName = e.target[0].value.toLowerCase();
 
-    setAddingCategory(false); // Hide adding product form
-    addCategoryToFireStore(categoryName); // Add category to Firestore
+    // Reset error state before checking the category
+    setCategoryError({ error: false, helperText: "" });
+
+    const categoryExists = await addCategoryToFireStore(categoryName);
+    if (categoryExists) {
+      setCategoryError({
+        error: true,
+        helperText: "Category already exists. Please try another name.",
+      });
+    } else {
+      setAddingCategory(false); // Hide adding product form
+    }
+  };
+
+  const onCategoryInputChange = () => {
+    if (categoryError.error) {
+      setCategoryError({ error: false, helperText: "" });
+    }
   };
 
   const categoryForm = (
@@ -50,7 +112,17 @@ export default function AdminPage() {
       <h1>Adding a category</h1>
       <div className="input-group">
         <label htmlFor="name">Category name</label>
-        <input type="text" name="name" id="name" required />
+        <input
+          type="text"
+          name="name"
+          id="name"
+          required
+          className={categoryError.error ? "error" : ""}
+          onChange={onCategoryInputChange}
+        />
+        {categoryError.error && (
+          <div className="error-message">{categoryError.helperText}</div>
+        )}
       </div>
       <button onClick={() => addDataHandler("category")} type="button">
         Exit
@@ -63,8 +135,18 @@ export default function AdminPage() {
     <form onSubmit={addProductHandler} className="add-product-form">
       <h1>Adding a product</h1>
       <div className="input-group">
-        <label htmlFor="name">Title</label>
-        <input type="text" name="name" id="name" required />
+        <label htmlFor="name">Name</label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          required
+          className={productTitleError.error ? "error" : ""}
+          onChange={onProductTitleInputChange}
+        />
+        {productTitleError.error && (
+          <div className="error-message">{productTitleError.helperText}</div>
+        )}
       </div>
       <div className="input-group">
         <label htmlFor="price">Price (kr)</label>
@@ -73,7 +155,12 @@ export default function AdminPage() {
       <div className="input-group">
         <label htmlFor="category">Category</label>
         <select name="category" id="category" required>
-          <option value="">HARDCODED TODO</option>
+          <option value="">Select a category</option>
+          {CATEGORIES.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
         </select>
       </div>
       <div className="input-group">

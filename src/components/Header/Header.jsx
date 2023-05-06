@@ -12,6 +12,11 @@ export default function Header() {
               <img src="" alt="LOGO" />
             </Link>
           </div>
+          <div className="header-link">
+            <Link to="/admin-page-hc">
+              <span>AdminPanel</span>
+            </Link>
+          </div>
         </div>
         <div className="header-right">
           <Menu />

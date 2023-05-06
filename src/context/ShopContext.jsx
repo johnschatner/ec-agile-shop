@@ -8,10 +8,12 @@ import {
   collection,
   orderBy,
   query,
+  where,
   getDocs,
   onSnapshot,
   addDoc,
 } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_REACT_APP_FIREBASE_API_KEY,
@@ -28,6 +30,9 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = getFirestore(app);
+
+// Initialize Firebase Storage
+const storage = getStorage(app);
 
 export const ShopContext = createContext(null);
 
@@ -46,7 +51,7 @@ export const ShopContextProvider = (props) => {
     localStorage.setItem("products", JSON.stringify(products));
   }
 
-  // Fetch products from Firestore if not cached
+  // Fetch products & categories from Firestore if not cached
   useEffect(() => {
     // Try to load cached data from local storage
     const cachedProducts = getCachedProducts();
@@ -58,53 +63,92 @@ export const ShopContextProvider = (props) => {
     // Set up the real-time listener to update products when they change
     const unsubscribe = fetchProducts();
 
+    // Fetch categories once
+    fetchCategories();
+
     // Clean up the real-time listener when the component is unmounted
     return () => {
       unsubscribe();
     };
   }, []);
 
-  async function addCategoryToFireStore(categoryName) {
-    console.log("added to firestore:", categoryName);
+  async function fetchCategories() {
     const categoryCollection = collection(db, "categories");
-    const category = {
-      category: categoryName,
-    };
-    try {
-      const docRef = await addDoc(categoryCollection, category);
-      console.log(`Document written with ID: ${docRef.id}`);
-    } catch (e) {
-      console.error(`Error adding document: ${e}`);
+    const categorySnapshot = await getDocs(categoryCollection);
+    const categoriesList = categorySnapshot.docs.map(
+      (doc) => doc.data().category
+    );
+    setCATEGORIES(categoriesList);
+  }
+
+  async function addCategoryToFireStore(categoryName) {
+    console.log("adding to firestore:", categoryName);
+    const categoryCollection = collection(db, "categories");
+
+    // Check if the category already exists
+    const q = query(categoryCollection, where("category", "==", categoryName));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      // Category doesn't exist, so add it
+      const category = {
+        category: categoryName,
+      };
+      try {
+        const docRef = await addDoc(categoryCollection, category);
+        console.log(`Document written with ID: ${docRef.id}`);
+        return false;
+      } catch (e) {
+        console.error(`Error adding document: ${e}`);
+      }
+    } else {
+      console.log("Category already exists in the database.");
+      return true;
     }
   }
 
-  const setCachedCategories = (categories) => {
-    localStorage.setItem("categories", JSON.stringify(categories));
-  };
+  // async function addProductToFirestore(obj) {
+  //   console.log("added to firestore", obj);
 
-  function fetchCategories() {
-    const categoriesCollection = collection(db, "categories");
-    const q = query(categoriesCollection, orderBy("id"));
+  //   const productImage = obj.productImage;
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const categoriesSet = new Set(); // Use a Set to store unique categories
-      snapshot.docs.forEach((doc) => {
-        const data = doc.data();
-        const category = data.name;
-        categoriesSet.add(category); // Add the category to the Set
-      });
+  //   // Upload the image to Firebase Storage
+  //   const imageRef = ref(storage, `images/${productImage.name}`);
+  //   const snapshot = await uploadBytes(imageRef, productImage);
+  //   const imageURL = await getDownloadURL(snapshot.ref);
 
-      const categoriesList = Array.from(categoriesSet); // Convert the Set back to an array
-      console.log("Fetching categories from Firestore", categoriesList);
-      setCATEGORIES(categoriesList);
-      setCachedCategories(categoriesList); // Update the cached data in local storage
-    });
+  //   console.log(imageURL);
+  // }
 
-    return unsubscribe;
-  }
+  async function addProductToFirestore(product) {
+    try {
+      const productImage = product.productImage;
+      // Upload the image to Firebase Storage
+      const imageRef = ref(storage, `product_images/${product.name}`);
+      const snapshot = await uploadBytes(imageRef, productImage);
 
-  async function addProductToFirestore(obj) {
-    console.log("added to firestore");
+      // Get the download URL for the uploaded image
+      const imageURL = await getDownloadURL(snapshot.ref);
+
+      // Create a new product object with the image URL
+      const updatedProduct = {
+        name: product.name,
+        price: product.price,
+        category: product.category,
+        description: product.description,
+        id: Math.floor(Math.random() * 1000000),
+        image: imageURL,
+        dateAdded: new Date().toISOString().slice(0, 10),
+      };
+
+      // Add the product to Firestore
+      const productsRef = collection(db, "products");
+      const newProductRef = await addDoc(productsRef, updatedProduct);
+
+      console.log("Product added with image: ", newProductRef.id);
+    } catch (error) {
+      console.error("Error adding product with image: ", error);
+    }
   }
 
   async function addProductsToFirestore() {
@@ -153,11 +197,12 @@ export const ShopContextProvider = (props) => {
   // Export
   const contextValue = {
     PRODUCTS,
+    CATEGORIES,
+    storage, // Firebase Storage
     setPRODUCTS,
     getProduct,
     getProductsInCategory,
     addProductToFirestore,
-    fetchCategories,
     addCategoryToFireStore,
   };
 

@@ -25,7 +25,7 @@ const SkeletonImage = ({ children, delay = 0 }) => {
   return (
     <div
       style={{ width: dimensions.width, height: dimensions.height }}
-      className={`skeleton-image-wrapper ${isLoading ? "loading" : ""}`}
+      className={`skeleton-image-wrapper ${isLoading ? "loading" : "rendered"}`}
     >
       {isLoading && <div className="skeleton-image" />}
       {React.cloneElement(children, {

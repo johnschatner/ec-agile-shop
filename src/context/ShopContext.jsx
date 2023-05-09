@@ -12,6 +12,7 @@ import {
   getDocs,
   onSnapshot,
   addDoc,
+  limit,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -37,6 +38,7 @@ const storage = getStorage(app);
 export const ShopContext = createContext(null);
 
 export const ShopContextProvider = (props) => {
+  const pageSize = 100;
   // Stuff
   const [PRODUCTS, setPRODUCTS] = useState([]);
   const [CATEGORIES, setCATEGORIES] = useState([]);
@@ -51,20 +53,55 @@ export const ShopContextProvider = (props) => {
     localStorage.setItem("products", JSON.stringify(products));
   }
 
+  function getCachedProducts() {
+    const cachedData = localStorage.getItem("products");
+    return cachedData && cachedData !== "undefined"
+      ? JSON.parse(cachedData)
+      : null;
+  }
+
+  function setCachedCategories(categories) {
+    console.log("Caching categories in local storage");
+    localStorage.setItem("categories", JSON.stringify(categories));
+  }
+
+  function getCachedCategories() {
+    const cachedData = localStorage.getItem("categories");
+    return cachedData && cachedData !== "undefined"
+      ? JSON.parse(cachedData)
+      : null;
+  }
+
   // Fetch products & categories from Firestore if not cached
   useEffect(() => {
-    // Try to load cached data from local storage
-    const cachedProducts = getCachedProducts();
-    if (cachedProducts) {
-      console.log("Fetching products from local storage");
-      setPRODUCTS(cachedProducts);
+    async function fetchInitialData() {
+      // Try to load cached data from local storage
+      const cachedProducts = getCachedProducts();
+      if (cachedProducts) {
+        console.log("Fetching products from local storage");
+        setPRODUCTS(cachedProducts);
+      } else {
+        // Fetch products once if not cached
+        await fetchProducts();
+      }
+
+      // Fetch categories once
+      await fetchCategories();
     }
 
-    // Set up the real-time listener to update products when they change
-    const unsubscribe = fetchProducts();
+    fetchInitialData();
 
-    // Fetch categories once
-    fetchCategories();
+    // Set up the real-time listener to update products when they change
+    const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
+      const productsList = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        data.id = doc.id; // Use Firestore document ID as the product ID
+        return data;
+      });
+      console.log("Fetching products from Firestore", productsList);
+      setPRODUCTS(productsList);
+      setCachedProducts(productsList); // Update the cached data in local storage
+    });
 
     // Clean up the real-time listener when the component is unmounted
     return () => {
@@ -73,12 +110,22 @@ export const ShopContextProvider = (props) => {
   }, []);
 
   async function fetchCategories() {
+    const cachedCategories = getCachedCategories();
+    if (cachedCategories) {
+      console.log("Fetching categories from local storage");
+      setCATEGORIES(cachedCategories);
+      return;
+    }
+
     const categoryCollection = collection(db, "categories");
     const categorySnapshot = await getDocs(categoryCollection);
     const categoriesList = categorySnapshot.docs.map(
       (doc) => doc.data().category
     );
+
+    console.log("Setting categories:", categoriesList);
     setCATEGORIES(categoriesList);
+    setCachedCategories(categoriesList);
   }
 
   async function addCategoryToFireStore(categoryName) {
@@ -107,28 +154,24 @@ export const ShopContextProvider = (props) => {
     }
   }
 
-  // async function addProductToFirestore(obj) {
-  //   console.log("added to firestore", obj);
-
-  //   const productImage = obj.productImage;
-
-  //   // Upload the image to Firebase Storage
-  //   const imageRef = ref(storage, `images/${productImage.name}`);
-  //   const snapshot = await uploadBytes(imageRef, productImage);
-  //   const imageURL = await getDownloadURL(snapshot.ref);
-
-  //   console.log(imageURL);
-  // }
-
   async function addProductToFirestore(product) {
     try {
-      const productImage = product.productImage;
-      // Upload the image to Firebase Storage
-      const imageRef = ref(storage, `product_images/${product.name}`);
-      const snapshot = await uploadBytes(imageRef, productImage);
+      const productImages = product.productImageArray;
+      const imageURLs = {};
 
-      // Get the download URL for the uploaded image
-      const imageURL = await getDownloadURL(snapshot.ref);
+      // Upload each image to Firebase Storage
+      for (let i = 0; i < productImages.length; i++) {
+        const image = productImages[i];
+        const imageRef = ref(
+          storage,
+          `product_images/${product.name}/${product.name}_${i}`
+        );
+        const snapshot = await uploadBytes(imageRef, image);
+        const imageURL = await getDownloadURL(snapshot.ref);
+        imageURLs[`image${i + 1}`] = imageURL; // Assign the URL to a property based on the image index
+      }
+
+      console.log(productImages);
 
       // Create a new product object with the image URL
       const updatedProduct = {
@@ -136,8 +179,7 @@ export const ShopContextProvider = (props) => {
         price: product.price,
         category: product.category,
         description: product.description,
-        id: Math.floor(Math.random() * 1000000),
-        image: imageURL,
+        image: imageURLs,
         dateAdded: new Date().toISOString().slice(0, 10),
       };
 
@@ -153,30 +195,38 @@ export const ShopContextProvider = (props) => {
 
   async function addProductsToFirestore() {
     const productsCollection = collection(db, "products");
+    const batch = writeBatch(db);
 
-    PRODUCTS.forEach(async (product) => {
-      try {
-        const docRef = await addDoc(productsCollection, product);
-        console.log(`Document written with ID: ${docRef.id}`);
-      } catch (e) {
-        console.error(`Error adding document: ${e}`);
-      }
+    PRODUCTS.forEach((product) => {
+      const newDocRef = doc(productsCollection);
+      batch.set(newDocRef, product);
     });
+
+    try {
+      await batch.commit();
+      console.log("Batch write successful");
+    } catch (e) {
+      console.error(`Error with batch write: ${e}`);
+    }
   }
 
-  function fetchProducts() {
+  function fetchProducts(startAfter) {
     const productsCollection = collection(db, "products");
-    const q = query(productsCollection, orderBy("id"));
+    const q = query(
+      productsCollection,
+      orderBy("id"),
+      startAfter ? startAfter() : limit(pageSize)
+    );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const productsList = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        data.id = parseInt(data.id, 10); // Convert the id back to a number
-        return data;
+        const product = doc.data();
+        product.id = parseInt(product.id, 10); // Convert the id back to a number
+        return product;
       });
       console.log("Fetching products from Firestore", productsList);
-      setPRODUCTS(productsList);
-      setCachedProducts(productsList); // Update the cached data in local storage
+      setPRODUCTS((prevProducts) => [...prevProducts, ...productsList]);
+      setCachedProducts([...PRODUCTS, ...productsList]); // Update the cached data in local storage
     });
 
     return unsubscribe;
@@ -198,12 +248,16 @@ export const ShopContextProvider = (props) => {
   const contextValue = {
     PRODUCTS,
     CATEGORIES,
-    storage, // Firebase Storage
+    setCATEGORIES,
     setPRODUCTS,
     getProduct,
     getProductsInCategory,
     addProductToFirestore,
     addCategoryToFireStore,
+    setCachedCategories,
+    setCachedProducts,
+    fetchCategories,
+    setCATEGORIES,
   };
 
   return (

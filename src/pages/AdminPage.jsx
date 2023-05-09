@@ -2,6 +2,9 @@ import "./AdminPage.css";
 import { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 
+// Components
+import ImageUploader from "../components/ImageUploader/ImageUploader";
+
 export default function AdminPage() {
   const {
     PRODUCTS,
@@ -21,6 +24,10 @@ export default function AdminPage() {
     helperText: "",
   });
 
+  const resetCache = () => {
+    localStorage.clear();
+  };
+
   const isProductTitleUnique = (name) => {
     return !PRODUCTS.some(
       (product) => product.name.toLowerCase() === name.toLowerCase()
@@ -37,6 +44,7 @@ export default function AdminPage() {
       }
     } else if (type === "category") {
       setAddingProduct(false); // Hide adding product form
+      setSelectedFiles([]); // Clear the selected files
       if (addingCategory) {
         setAddingCategory(false);
         setCategoryError({ error: false, helperText: "" });
@@ -68,7 +76,7 @@ export default function AdminPage() {
     const productPrice = parseFloat(e.target.price.value);
     const productCategory = e.target.category.value;
     const productDescription = e.target.description.value;
-    const productImage = e.target.imageUpload.files[0];
+    const productImage = selectedFiles;
 
     // Create the product data object
     const newProduct = {
@@ -76,7 +84,7 @@ export default function AdminPage() {
       price: productPrice,
       category: productCategory,
       description: productDescription,
-      productImage,
+      productImageArray: productImage,
     };
 
     setAddingProduct(false); // Hide adding product form
@@ -131,6 +139,13 @@ export default function AdminPage() {
     </form>
   );
 
+  const [selectedFiles, setSelectedFiles] = useState([]);
+
+  const handleSelectedFiles = (files) => {
+    setSelectedFiles(files);
+    console.log(selectedFiles);
+  };
+
   const productForm = (
     <form onSubmit={addProductHandler} className="add-product-form">
       <h1>Adding a product</h1>
@@ -168,14 +183,15 @@ export default function AdminPage() {
         <textarea type="text" name="description" id="description" required />
       </div>
       <div className="input-group">
-        <label htmlFor="imageUpload">Image</label>
+        <ImageUploader onFilesSelected={handleSelectedFiles} />
+        {/* <label htmlFor="imageUpload">Image</label>
         <input
           type="file"
           name="imageUpload"
           id="imageUpload"
           accept="image/*"
           required
-        />
+        /> */}
       </div>
       <button onClick={() => addDataHandler("product")} type="button">
         Exit
@@ -205,6 +221,10 @@ export default function AdminPage() {
             Add category
           </button>
         )}
+      </div>
+      <div>
+        <div>Reset fetched products and categories</div>
+        <button onClick={resetCache}>Clear cache</button>
       </div>
     </>
   );

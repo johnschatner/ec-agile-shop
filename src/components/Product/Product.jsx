@@ -10,11 +10,13 @@ export default function Product(props) {
   const product = getProduct(props.id);
   const { name, price, description, image } = product;
 
+  const imageIsObject = typeof image === "object";
+
   return (
     <div className="product-card">
       <div className="product-img">
         <SkeletonImage delay={200}>
-          <img src={image} alt="" />
+          <img src={imageIsObject ? image.image1 : image} alt="" />
         </SkeletonImage>
       </div>
       <div>{name}</div>

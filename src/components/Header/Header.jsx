@@ -18,6 +18,11 @@ export default function Header() {
               <span>AdminPanel</span>
             </Link>
           </div>
+          <div className="header-link">
+            <Link to="/wishlist">
+              <span>Wishlist</span>
+            </Link>
+          </div>
         </div>
         <div className="header-right">
           <Cart />

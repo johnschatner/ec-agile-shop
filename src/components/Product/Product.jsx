@@ -2,14 +2,14 @@ import "./Product.css";
 import { useContext } from "react";
 import { ShopContext } from "../../context/ShopContext";
 import { CartContext } from "../../context/CartContext";
+import { WishlistContext } from "../../context/WishlistContext";
 
 import SkeletonImage from "../SkeletonLoader/SkeletonImage";
-import { increment } from "@firebase/firestore";
 
 export default function Product(props) {
   const { getProduct } = useContext(ShopContext);
-  const { addToCart, decrementQuantity, incrementQuantity } =
-    useContext(CartContext);
+  const { addToCart, decrementQuantity } = useContext(CartContext);
+  const { addToWishlist } = useContext(WishlistContext);
 
   const product = getProduct(props.id);
   const { name, price, description, image } = product;
@@ -18,6 +18,7 @@ export default function Product(props) {
 
   return (
     <div className="product-card">
+      <button onClick={() => addToWishlist(product)}>Heart</button>
       <div className="product-img">
         <SkeletonImage delay={200}>
           <img src={imageIsObject ? image.image1 : image} alt="" />

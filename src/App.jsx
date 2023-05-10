@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 // Context
 import { ShopContextProvider } from "./context/ShopContext";
 import { CartContextProvider } from "./context/CartContext";
+import { WishlistContextProvider } from "./context/WishlistContext";
 
 // Components
 import PageRoutes from "./pages/PageRoutes";
@@ -13,10 +14,12 @@ function App() {
   return (
     <ShopContextProvider>
       <CartContextProvider>
-        <BrowserRouter>
-          <Header></Header>
-          <PageRoutes />
-        </BrowserRouter>
+        <WishlistContextProvider>
+          <BrowserRouter>
+            <Header></Header>
+            <PageRoutes />
+          </BrowserRouter>
+        </WishlistContextProvider>
       </CartContextProvider>
     </ShopContextProvider>
   );

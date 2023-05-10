@@ -1,11 +1,13 @@
 import "./Product.css";
 import { useContext } from "react";
 import { ShopContext } from "../../context/ShopContext";
+import { CartContext } from "../../context/CartContext";
 
 import SkeletonImage from "../SkeletonLoader/SkeletonImage";
 
 export default function Product(props) {
   const { getProduct } = useContext(ShopContext);
+  const { addToCart, decrementQuantity } = useContext(CartContext);
 
   const product = getProduct(props.id);
   const { name, price, description, image } = product;
@@ -22,6 +24,8 @@ export default function Product(props) {
       <div>{name}</div>
       <div>{price}</div>
       <div>{description}</div>
+      <button onClick={() => addToCart(product)}>Lägg i varukorg</button>
+      <button onClick={() => decrementQuantity(props.id)}>Ta bort</button>
     </div>
   );
 }

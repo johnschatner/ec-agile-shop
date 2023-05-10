@@ -1,0 +1,25 @@
+.cart-window {
+  position: absolute;
+  top: 62px;
+  background-color: #e4b9b9;
+  padding: 1rem;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.cart-item img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+.cart-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem;
+}

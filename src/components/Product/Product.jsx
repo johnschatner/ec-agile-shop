@@ -4,10 +4,12 @@ import { ShopContext } from "../../context/ShopContext";
 import { CartContext } from "../../context/CartContext";
 
 import SkeletonImage from "../SkeletonLoader/SkeletonImage";
+import { increment } from "@firebase/firestore";
 
 export default function Product(props) {
   const { getProduct } = useContext(ShopContext);
-  const { addToCart, decrementQuantity } = useContext(CartContext);
+  const { addToCart, decrementQuantity, incrementQuantity } =
+    useContext(CartContext);
 
   const product = getProduct(props.id);
   const { name, price, description, image } = product;
@@ -24,8 +26,8 @@ export default function Product(props) {
       <div>{name}</div>
       <div>{price}</div>
       <div>{description}</div>
-      <button onClick={() => addToCart(product)}>Lägg i varukorg</button>
-      <button onClick={() => decrementQuantity(props.id)}>Ta bort</button>
+      <button onClick={() => addToCart(product)}>Köp</button>
+      <button onClick={() => decrementQuantity(props.id)}>-</button>
     </div>
   );
 }

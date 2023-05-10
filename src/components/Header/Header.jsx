@@ -1,6 +1,7 @@
 import "./Header.css";
 import { Link } from "react-router-dom";
 import Menu from "../Menu/Menu.jsx";
+import Cart from "./Cart/Cart";
 
 export default function Header() {
   return (
@@ -19,6 +20,7 @@ export default function Header() {
           </div>
         </div>
         <div className="header-right">
+          <Cart />
           <Menu />
         </div>
       </div>

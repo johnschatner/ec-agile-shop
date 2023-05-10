@@ -9,6 +9,11 @@ export const WishlistContextProvider = (props) => {
     console.log(WISHLIST);
   }, [WISHLIST]);
 
+  const productInWishlist = (product) => {
+    const productExists = WISHLIST.find((item) => item.id === product.id);
+    return productExists;
+  };
+
   const addToWishlist = (product) => {
     const productExists = WISHLIST.find((item) => item.id === product.id);
     // Remove wishlist item if it already exists
@@ -23,6 +28,7 @@ export const WishlistContextProvider = (props) => {
   const contextValue = {
     WISHLIST,
     addToWishlist,
+    productInWishlist,
   };
 
   return (

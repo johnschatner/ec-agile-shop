@@ -9,16 +9,20 @@ import SkeletonImage from "../SkeletonLoader/SkeletonImage";
 export default function Product(props) {
   const { getProduct } = useContext(ShopContext);
   const { addToCart, decrementQuantity } = useContext(CartContext);
-  const { addToWishlist } = useContext(WishlistContext);
+  const { addToWishlist, productInWishlist } = useContext(WishlistContext);
 
   const product = getProduct(props.id);
   const { name, price, description, image } = product;
 
   const imageIsObject = typeof image === "object";
 
+  const alreadyInWishlist = productInWishlist(product);
+
   return (
     <div className="product-card">
-      <button onClick={() => addToWishlist(product)}>Heart</button>
+      <button onClick={() => addToWishlist(product)}>
+        {alreadyInWishlist ? "<3" : "Add to wishlist"}
+      </button>
       <div className="product-img">
         <SkeletonImage delay={200}>
           <img src={imageIsObject ? image.image1 : image} alt="" />

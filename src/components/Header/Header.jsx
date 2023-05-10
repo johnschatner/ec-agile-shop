@@ -2,6 +2,7 @@ import "./Header.css";
 import { Link } from "react-router-dom";
 import Menu from "../Menu/Menu.jsx";
 import Cart from "./Cart/Cart";
+import Search from "./Search/Search";
 
 export default function Header() {
   return (
@@ -25,6 +26,7 @@ export default function Header() {
           </div>
         </div>
         <div className="header-right">
+          <Search />
           <Cart />
           <Menu />
         </div>

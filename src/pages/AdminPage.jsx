@@ -2,9 +2,6 @@ import "./AdminPage.css";
 import { useContext, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 
-// Components
-import ImageUploader from "../components/ImageUploader/ImageUploader";
-
 export default function AdminPage() {
   const {
     PRODUCTS,
@@ -62,21 +59,20 @@ export default function AdminPage() {
 
   const addProductHandler = async (e) => {
     e.preventDefault();
-    const title = e.target.name.value;
 
-    if (!isProductTitleUnique(title)) {
+    const productName = e.target.name.value;
+    const productPrice = parseFloat(e.target.price.value);
+    const productCategory = e.target.category.value;
+    const productDescription = e.target.description.value;
+    const productImage = e.target.imageUpload.files;
+
+    if (!isProductTitleUnique(productName)) {
       setProductTitleError({
         error: true,
         helperText: "Product title already exists. Please use a unique title.",
       });
       return;
     }
-
-    const productName = e.target.name.value;
-    const productPrice = parseFloat(e.target.price.value);
-    const productCategory = e.target.category.value;
-    const productDescription = e.target.description.value;
-    const productImage = selectedFiles;
 
     // Create the product data object
     const newProduct = {
@@ -139,13 +135,6 @@ export default function AdminPage() {
     </form>
   );
 
-  const [selectedFiles, setSelectedFiles] = useState([]);
-
-  const handleSelectedFiles = (files) => {
-    setSelectedFiles(files);
-    console.log(selectedFiles);
-  };
-
   const productForm = (
     <form onSubmit={addProductHandler} className="add-product-form">
       <h1>Adding a product</h1>
@@ -183,15 +172,7 @@ export default function AdminPage() {
         <textarea type="text" name="description" id="description" required />
       </div>
       <div className="input-group">
-        <ImageUploader onFilesSelected={handleSelectedFiles} />
-        {/* <label htmlFor="imageUpload">Image</label>
-        <input
-          type="file"
-          name="imageUpload"
-          id="imageUpload"
-          accept="image/*"
-          required
-        /> */}
+        <input id="imageUpload" type="file" accept="image/*" multiple />
       </div>
       <button onClick={() => addDataHandler("product")} type="button">
         Exit

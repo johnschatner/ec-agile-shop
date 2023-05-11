@@ -12,8 +12,6 @@ export default function SearchPage() {
     return product.name.toLowerCase().includes(location.toLowerCase());
   });
 
-  console.log(searchResults);
-
   const searchItems = searchResults.map((item) => {
     const { name, image, price, id } = item;
     const imageIsObject = typeof image === "object";

@@ -29,7 +29,7 @@ export default function Cart() {
 
   return (
     <>
-      <button onClick={cartClickHandler}>Cartman</button>
+      <button onClick={cartClickHandler}>Cart</button>
       {cartWindow && (
         <div className="cart-window">
           <div>Your cart</div>

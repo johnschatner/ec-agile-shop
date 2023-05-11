@@ -5,10 +5,11 @@ import { CartContext } from "../../context/CartContext";
 import { WishlistContext } from "../../context/WishlistContext";
 
 import SkeletonImage from "../SkeletonLoader/SkeletonImage";
+import ShareToInstagram from "../ShareToInstagram/ShareToInstagram";
 
 export default function Product(props) {
   const { getProduct } = useContext(ShopContext);
-  const { addToCart, decrementQuantity } = useContext(CartContext);
+  const { addToCart } = useContext(CartContext);
   const { addToWishlist, productInWishlist } = useContext(WishlistContext);
 
   const product = getProduct(props.id);
@@ -32,7 +33,7 @@ export default function Product(props) {
       <div>{price}</div>
       <div>{description}</div>
       <button onClick={() => addToCart(product)}>Köp</button>
-      <button onClick={() => decrementQuantity(props.id)}>-</button>
+      <ShareToInstagram product={product} />
     </div>
   );
 }

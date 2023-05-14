@@ -5,7 +5,7 @@ import { CartContext } from "../../context/CartContext";
 import { WishlistContext } from "../../context/WishlistContext";
 
 import SkeletonImage from "../SkeletonLoader/SkeletonImage";
-import ShareToInstagram from "../ShareToInstagram/ShareToInstagram";
+import ShareButton from "../ShareButton/ShareButton";
 
 export default function Product(props) {
   const { getProduct } = useContext(ShopContext);
@@ -33,7 +33,7 @@ export default function Product(props) {
       <div>{price}</div>
       <div>{description}</div>
       <button onClick={() => addToCart(product)}>Köp</button>
-      <ShareToInstagram product={product} />
+      <ShareButton product={product} />
     </div>
   );
 }
